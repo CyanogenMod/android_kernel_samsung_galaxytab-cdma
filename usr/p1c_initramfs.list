@@ -44,6 +44,8 @@ file /stage1/bml_over_mtd source/usr/p1c_initramfs_files/bml_over_mtd 755 0 0
 file /stage1/busybox source/usr/p1c_initramfs_files/busybox 755 0 0
 file /stage1/erase_image source/usr/p1c_initramfs_files/erase_image 755 0 0
 file /stage1/init source/usr/p1c_initramfs_files/init 755 0 0
+file /stage1/boot.cpio ../../ramdisk.cpio 644 0 0
+file /stage1/recovery.cpio ../../ramdisk-recovery.cpio 644 0 0
 slink /stage1/cat busybox 755 0 0
 slink /stage1/cp busybox 755 0 0
 slink /stage1/cpio busybox 755 0 0

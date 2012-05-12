@@ -12,10 +12,7 @@ rm /init
 
 bml_over_mtd dump boot 72 reservoir 2004 /stage1/boot.bin
 
-eval $(grep -m 1 -A 1 BOOT_IMAGE_OFFSETS /stage1/boot.bin | tail -n 1)
-
-load_offset=$boot_offset
-load_len=$boot_len
+load_image=/stage1/boot.cpio
 
 mount -t yaffs2 /dev/block/mtdblock2 /system
 mount -t yaffs2 /dev/block/mtdblock3 /cache
@@ -23,8 +20,8 @@ mount -t yaffs2 /dev/block/mtdblock3 /cache
 if test -e /cache/.startrecovery || grep -q bootmode=2 /proc/cmdline ; then
 	# recovery boot
 	rm -fr /cache/.startrecovery
-	load_offset=$recovery_offset
-	load_len=$recovery_len
+
+	load_image=/stage1/recovery.cpio
 
 	# disable lpm
 	echo 0 > /sys/class/power_supply/battery/charging_mode_booting
@@ -43,8 +40,7 @@ elif ! test -e /system/build.prop ; then
 		echo "install_zip(\"`echo $UPDATE`\");" > /cache/recovery/extendedcommand
   	fi
 
-	load_offset=$recovery_offset
-	load_len=$recovery_len
+	load_image=/stage1/recovery.cpio
 
 	# disable lpm
 	echo 0 > /sys/class/power_supply/battery/charging_mode_booting
@@ -55,7 +51,7 @@ umount /system
 umount /sdcard
 rm -rf /sdcard
 
-dd bs=512 if=/stage1/boot.bin skip=$load_offset count=$load_len | zcat | cpio -i
+cpio -i < ${load_image}
 
 if grep -q 1 /sys/class/power_supply/battery/charging_mode_booting ; then
 	# low power mode
